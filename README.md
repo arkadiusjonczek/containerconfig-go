@@ -21,21 +21,21 @@ type CustomConfiguration struct {
 }
 
 func main() {
-    ruleset := configuration.NewRuleSet()
-    ruleset.Required("RequiredField")
-    ruleset.Optional("OptionalField", "optional")
+    builder := configuration.NewBuilder[CustomConfiguration]()
+    builder.Env("RequiredField")
+    builder.Env("OptionalField").SetOptional().WithDefault("optional")
     
-    customConfiguration, err := configuration.Create[CustomConfiguration](ruleset)
+    customConfiguration, err := builder.Build()
     if err != nil {
         log.Fatal(err)
     }
-
+    
     log.Println(customConfiguration.RequiredField)
     log.Println(customConfiguration.OptionalField)
 }
 ```
 
-You can find that example located inside the main directory.
+You can find that example located inside the [main](main) directory.
 
 ## Usage
 
@@ -43,18 +43,18 @@ See the previous example in action:
 
 ```shell
 $ go run main/main.go                    
-2024/05/01 20:55:19 environment variable 'RequiredField' is required but was not found
+2024/05/02 08:53:05 environment variable 'RequiredField' is required but was not found
 exit status 1
 ```
 
 ```shell
 $ RequiredField=Foo go run main/main.go                 
-2024/05/01 20:56:14 Foo
-2024/05/01 20:56:14 optional
+2024/05/02 08:53:20 Foo
+2024/05/02 08:53:20 optional
 ```
 
 ```shell
 $ RequiredField=Foo OptionalField=Bar go run main/main.go
-2024/05/01 20:56:41 Foo
-2024/05/01 20:56:41 Bar
+2024/05/02 08:53:33 Foo
+2024/05/02 08:53:33 Bar
 ```

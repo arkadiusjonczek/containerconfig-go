@@ -1,9 +1,8 @@
 package main
 
 import (
-	"log"
-
 	"github.com/arkadiusjonczek/containerconfig-go/configuration"
+	"log"
 )
 
 type CustomConfiguration struct {
@@ -12,11 +11,11 @@ type CustomConfiguration struct {
 }
 
 func main() {
-	ruleset := configuration.NewRuleSet()
-	ruleset.Required("RequiredField")
-	ruleset.Optional("OptionalField", "optional")
+	builder := configuration.NewBuilder[CustomConfiguration]()
+	builder.Env("RequiredField")
+	builder.Env("OptionalField").SetOptional().WithDefault("optional")
 
-	customConfiguration, err := configuration.Create[CustomConfiguration](ruleset)
+	customConfiguration, err := builder.Build()
 	if err != nil {
 		log.Fatal(err)
 	}
