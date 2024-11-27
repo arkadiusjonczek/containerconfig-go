@@ -1,19 +1,19 @@
 package configuration
 
-type Env struct {
+type env struct {
 	key string
-	Configuration
+	configuration
 }
 
-func NewEnv(key string) *Env {
-	return &Env{
+func NewEnv(key string) *env {
+	return &env{
 		key: key,
-		Configuration: Configuration{
+		configuration: configuration{
 			required: true,
 		},
 	}
 }
 
-func (e *Env) GetKey() string {
+func (e *env) GetKey() string {
 	return e.key
 }

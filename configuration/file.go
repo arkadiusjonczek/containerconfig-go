@@ -1,19 +1,19 @@
 package configuration
 
-type File struct {
+type file struct {
 	filepath string
-	Configuration
+	configuration
 }
 
-func NewFile(filepath string) *File {
-	return &File{
+func NewFile(filepath string) *file {
+	return &file{
 		filepath: filepath,
-		Configuration: Configuration{
+		configuration: configuration{
 			required: true,
 		},
 	}
 }
 
-func (f *File) GetKey() string {
+func (f *file) GetKey() string {
 	return f.filepath
 }

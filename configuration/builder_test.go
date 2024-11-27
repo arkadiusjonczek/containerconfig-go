@@ -13,6 +13,7 @@ import (
 type TestConfiguration struct {
 	RequiredField string
 	OptionalField string
+	CustomField   string
 	IntegerField  int
 	Emptyfile     string
 	Testfile      string
@@ -93,12 +94,15 @@ func Test_WithFile_Error_EmptyFile(t *testing.T) {
 func Test_ConfigurationFromEnv_WithSuccessfulConfiguration(t *testing.T) {
 	requiredValue := "foo"
 	optionalValue := "bar"
+	customFieldValue := "custom"
 
 	os.Setenv("RequiredField", requiredValue)
+	os.Setenv("CUSTOM_FIELD", customFieldValue)
 
 	builder := configuration.NewBuilder[TestConfiguration]()
 	builder.Env("RequiredField")
 	builder.Env("OptionalField").SetOptional().WithDefault(optionalValue)
+	builder.Env("CUSTOM_FIELD").UseFieldName("CustomField")
 
 	fileValue := "test"
 	optionalFileValue := "egal"
@@ -110,8 +114,11 @@ func Test_ConfigurationFromEnv_WithSuccessfulConfiguration(t *testing.T) {
 
 	require.NoError(t, err)
 	require.IsType(t, &TestConfiguration{}, configuration)
-	require.Equal(t, configuration.RequiredField, requiredValue)
-	require.Equal(t, configuration.OptionalField, optionalValue)
-	require.Equal(t, configuration.Emptyfile, optionalFileValue)
-	require.Equal(t, configuration.Testfile, fileValue)
+
+	require.Equal(t, requiredValue, configuration.RequiredField)
+	require.Equal(t, optionalValue, configuration.OptionalField)
+	require.Equal(t, customFieldValue, configuration.CustomField)
+
+	require.Equal(t, optionalFileValue, configuration.Emptyfile)
+	require.Equal(t, fileValue, configuration.Testfile)
 }

@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/arkadiusjonczek/containerconfig-go/configuration"
 	"log"
+
+	"github.com/arkadiusjonczek/containerconfig-go/configuration"
 )
 
 type CustomConfiguration struct {
