@@ -58,3 +58,20 @@ $ RequiredField=Foo OptionalField=Bar go run main/main.go
 2024/05/02 08:53:33 Foo
 2024/05/02 08:53:33 Bar
 ```
+
+## Custom Fields
+
+If your configuration field name is different from your environment variable or file name then you can use custom field like:
+
+```go
+type CustomConfiguration struct {
+	CustomField string
+}
+```
+
+```go
+builder := configuration.NewBuilder[CustomConfiguration]()
+builder.Env("CUSTOM_FIELD").UseFieldName("CustomField")
+```
+
+The builder will then look for the environment variable `CUSTOM_FIELD` and save the value in the field `CustomField` inside of the `CustomConfiguration`.

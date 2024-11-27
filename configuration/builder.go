@@ -9,39 +9,39 @@ import (
 )
 
 type builder[T any] struct {
-	envs  []*Env
-	files []*File
+	envs  []*env
+	files []*file
 }
 
 func NewBuilder[T any]() *builder[T] {
 	return &builder[T]{}
 }
 
-func (c *builder[T]) getEnvs() []*Env {
+func (c *builder[T]) getEnvs() []*env {
 	return c.envs
 }
 
-func (c *builder[T]) getFiles() []*File {
+func (c *builder[T]) getFiles() []*file {
 	return c.files
 }
 
-func (c *builder[T]) addEnv(env *Env) *Env {
+func (c *builder[T]) addEnv(env *env) *env {
 	c.envs = append(c.envs, env)
 
 	return env
 }
 
-func (c *builder[T]) addFile(file *File) *File {
+func (c *builder[T]) addFile(file *file) *file {
 	c.files = append(c.files, file)
 
 	return file
 }
 
-func (c *builder[T]) Env(key string) *Env {
+func (c *builder[T]) Env(key string) *env {
 	return c.addEnv(NewEnv(key))
 }
 
-func (c *builder[T]) File(filepath string) *File {
+func (c *builder[T]) File(filepath string) *file {
 	return c.addFile(NewFile(filepath))
 }
 
@@ -69,7 +69,14 @@ func (c *builder[T]) Build() (*T, error) {
 			}
 		}
 
-		field := valueOfConfigurationPtr.Elem().FieldByName(env.GetKey())
+		var fieldName string
+		if env.GetFieldName() != "" {
+			fieldName = env.GetFieldName()
+		} else {
+			fieldName = env.GetKey()
+		}
+
+		field := valueOfConfigurationPtr.Elem().FieldByName(fieldName)
 
 		valid := field.IsValid()
 		if !valid {
@@ -98,7 +105,13 @@ func (c *builder[T]) Build() (*T, error) {
 			}
 		}
 
-		fieldName := filepath.Base(file.GetKey())
+		var fieldName string
+		if file.GetFieldName() != "" {
+			fieldName = file.GetFieldName()
+		} else {
+			fieldName = filepath.Base(file.GetKey())
+		}
+
 		field := valueOfConfigurationPtr.Elem().FieldByName(fieldName)
 
 		valid := field.IsValid()
